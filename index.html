@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA Blast Lokal System</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #0b141a; color: white; padding: 20px; }
+        .card { background: #111b21; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        textarea { width: 100%; background: #2a3942; border: none; color: white; padding: 12px; border-radius: 8px; margin-top: 10px; box-sizing: border-box; }
+        button { width: 100%; background: #00a884; color: #111b21; border: none; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        button:active { background: #06cf9c; }
+        .log { margin-top: 20px; font-size: 14px; color: #8696a0; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3>WA Blast Lokal</h3>
+        <label>Pesan:</label>
+        <textarea id="pesan" rows="3" placeholder="Halo, apa kabar?"></textarea>
+        
+        <label style="display:block; margin-top:15px;">Daftar Nomor (Database Lokal):</label>
+        <textarea id="kontak" rows="8" placeholder="62812345678&#10;62819876543"></textarea>
+        
+        <button id="btnPlay">MULAI BLAST</button>
+        <div id="status" class="log">Status: Idle</div>
+    </div>
+
+    <script>
+        document.getElementById('btnPlay').onclick = async function() {
+            const pesan = encodeURIComponent(document.getElementById('pesan').value);
+            const daftar = document.getElementById('kontak').value.split('\n').filter(n => n.trim() !== "");
+            const status = document.getElementById('status');
+
+            for (let i = 0; i < daftar.length; i++) {
+                let nomor = daftar[i].trim().replace(/\D/g,'');
+                status.innerText = `Proses: ${i+1}/${daftar.length} -> ${nomor}`;
+                
+                // Eksekusi Lokal Intent via Browser
+                // Ini akan membuka aplikasi WA tanpa perlu internet untuk resolusi link
+                window.location.href = `whatsapp://send?phone=${nomor}&text=${pesan}`;
+
+                // Jeda 6 detik: Waktu bagi Anda untuk tekan 'Kirim' dan kembali ke browser
+                await new Promise(r => setTimeout(r, 6000));
+            }
+            status.innerText = "Semua database kontak selesai diproses!";
+        };
+    </script>
+</body>
+</html>
